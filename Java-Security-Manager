@@ -1,0 +1,55 @@
+QUESTION:
+
+What is the o/p if java security manager is installed and below program is ran.
+
+import java.util.*; import java.io.*;
+public class PermisTest {
+public static void main(String[] args) throws Exception { System.out.println(System.getProperty("user.home"));
+try
+{
+Scanner scObj = new Scanner (new File("input.txt"));
+
+int no1 = scObj.nextInt(); int no2 = scObj.nextInt();
+System.out.println("The two nos are : " + no1 + ", " + no2);
+
+// Write to a File
+Formatter outObj = new Formatter(new File("output.txt")); int totalSum = no1 + no2;
+System.out.println("The total sum value is " + totalSum); outObj.format("%d", totalSum);
+outObj.close();
+}
+catch(Exception ee)
+{
+System.out.println("Error "+ee.toString());
+}
+}
+}
+
+ANSWER:
+
+Expected Output (if permissions are granted):
+
+The program will run as expected, printing the sum of two numbers from the input file and writing the result to the output file
+
+Expected Output (if permissions are not granted):
+
+Error java.security.AccessControlException: access denied ("java.util.PropertyPermission" "user.home" "read")
+
+or
+
+Error java.security.AccessControlException: access denied ("java.io.FilePermission" "input.txt" "read")
+
+or
+
+Error java.security.AccessControlException: access denied ("java.io.FilePermission" "output.txt" "write")
+
+DETAILS:
+
+1.	Reading System Property (user.home):
+• If the policy file does not grant permission to read system properties (specifically,   user.home), the program will throw a SecurityException when calling System.getProperty("user.home").
+2.	Reading from a file (input.txt):
+• If the program does not have permission to read from the file system, specifically input.txt, the new File("input.txt") call will trigger a SecurityException or a FileNotFoundException if the file doesn’t exist.
+3.	Writing to a file (output.txt):
+• If the program is not granted permission to write to the file system, the creation of the Formatter object (new Formatter(new File("output.txt"))) will trigger a SecurityException.
+
+
+
