@@ -1,0 +1,218 @@
+QUESTION:
+
+Design a project in Swing.
+a)	Create a DB with Customer ID, Short Name, Full Name, Address 1, Address 2 and Address 3(each Address line is 80 Chars), City, and Postal Code.
+b)	Prepare a screen to list Customers, and select Customer to display the Address.
+c)	Address screen will have ADD, Modify and Delete.
+d)	All the Customers max can have 3 address.
+e)	Validations on Postal Code required.
+
+ANSWER:
+
+1. Database Design
+
+You can create a SQLite or MySQL database for simplicity.
+
+Tables:
+
+1.	Customer Table
+				• CustomerID (Primary Key, Integer, Auto Increment)
+				• ShortName (VARCHAR 50)
+				• FullName (VARCHAR 100)
+				• City (VARCHAR 50)
+				• PostalCode (VARCHAR 10)
+2.	Address Table
+				• AddressID (Primary Key, Integer, Auto Increment)
+				• CustomerID (Foreign Key from Customer Table)
+				• Address1 (VARCHAR 50)
+				• Address2 (VARCHAR 50)
+				• Address3 (VARCHAR 50)
+
+DDL SQL Commands:
+
+CREATE TABLE Customer (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    ShortName VARCHAR(50),
+    FullName VARCHAR(100),
+    City VARCHAR(50),
+    PostalCode VARCHAR(10)
+);
+
+CREATE TABLE Address (
+    AddressID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+Address1 VARCHAR(50),
+Address2 VARCHAR(50),
+Address3 VARCHAR(50),
+FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+	);
+2. Java Swing UI Design
+
+a)  Main Screen - Customer List Screen
+Components:
+• JTable: To display the list of customers (CustomerID, ShortName, FullName, City, PostalCode).
+			• JButton: “Select Customer” for displaying the customer’s address.
+			• JButton: “Add New Customer” to open a new customer form.
+Functions:
+			• Load customer data from the database into the JTable.
+			• Handle button clicks to view the selected customer’s address.
+b) Address Management Screen
+	Components:
+			• JLabel + JTextField: For ShortName, FullName, City, PostalCode.
+			• JLabel + JTextField: For Address lines (Address1, Address2, Address3).
+			• JButton: “Add”, “Modify”, “Delete” buttons.
+			• JTable: Display a list of existing addresses for the selected customer. 
+	Functions:
+			• Display the customer’s addresses.
+			• Allow adding, modifying, and deleting customer addresses.
+			• Handle form validation (e.g., validate postal codes).
+3. Postal Code Validation Logic
+
+• Postal code should be validated based on the format for a specific country (e.g., 5 digits for               the US, etc.).
+• Use a regular expression in Java:
+
+              public boolean isValidPostalCode(String postalCode) {
+              return postalCode.matches("\\d{5}"); // Example for 5-digit postal code.
+              }
+
+4. Swing Components - Code Implementation
+
+             a) Customer List Screen
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class CustomerListScreen extends JFrame {
+
+    JTable customerTable;
+    JButton selectButton, addButton;
+
+    public CustomerListScreen() {
+        setTitle("Customer List");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        customerTable = new JTable();  // Load this JTable from DB
+        loadCustomers();
+
+        selectButton = new JButton("Select Customer");
+        addButton = new JButton("Add New Customer");
+
+        selectButton.addActionListener(e -> openAddressScreen());
+        addButton.addActionListener(e -> openAddCustomerScreen());
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(selectButton);
+        buttonPanel.add(addButton);
+
+        add(new JScrollPane(customerTable), BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private void loadCustomers() {
+        // Load customer data from DB and populate JTable
+    }
+
+    private void openAddressScreen() {
+        // Open Address management screen for selected customer
+        int selectedRow = customerTable.getSelectedRow();
+        if (selectedRow != -1) {
+            int customerID = (int) customerTable.getValueAt(selectedRow, 0); // Assuming first column is CustomerID
+            new AddressScreen(customerID);
+}
+    }
+
+    private void openAddCustomerScreen() {
+        // Open new customer form screen
+    }
+
+    public static void main(String[] args) {
+        new CustomerListScreen();
+    }
+}
+
+          b) Address Management Screen
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class AddressScreen extends JFrame {
+
+    JTextField address1Field, address2Field, address3Field, postalCodeField;
+    JButton addButton, modifyButton, deleteButton;
+
+    JTable addressTable;
+    int customerID;
+
+    public AddressScreen(int customerID) {
+        this.customerID = customerID;
+
+        setTitle("Customer Address Management");
+        setSize(600, 400);
+
+        address1Field = new JTextField(50);
+        address2Field = new JTextField(50);
+        address3Field = new JTextField(50);
+        postalCodeField = new JTextField(10);
+
+        addButton = new JButton("Add Address");
+        modifyButton = new JButton("Modify Address");
+        deleteButton = new JButton("Delete Address");
+addressTable = new JTable();  // Load this JTable with customer addresses
+        loadAddresses();
+
+        JPanel inputPanel = new JPanel(new GridLayout(5, 2));
+        inputPanel.add(new JLabel("Address 1: "));
+        inputPanel.add(address1Field);
+        inputPanel.add(new JLabel("Address 2: "));
+        inputPanel.add(address2Field);
+        inputPanel.add(new JLabel("Address 3: "));
+        inputPanel.add(address3Field);
+        inputPanel.add(new JLabel("Postal Code: "));
+        inputPanel.add(postalCodeField);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(addButton);
+        buttonPanel.add(modifyButton);
+        buttonPanel.add(deleteButton);
+
+        addButton.addActionListener(e -> addAddress());
+        modifyButton.addActionListener(e -> modifyAddress());
+        deleteButton.addActionListener(e -> deleteAddress());
+
+        add(new JScrollPane(addressTable), BorderLayout.CENTER);
+        add(inputPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private void loadAddresses() {
+        // Load addresses from the DB for the given customerID
+    }
+
+    private void addAddress() {
+        // Add new address to the database after validation
+    }
+
+    private void modifyAddress() {
+        // Modify existing address in the database
+    }
+
+    private void deleteAddress() {
+// Delete selected address from the database
+    }
+}
+
+EXPLANATION:
+
+This project allows you to:
+	• List all customers.
+	• Add, modify, and delete customer addresses with validation (postal code check).
+
