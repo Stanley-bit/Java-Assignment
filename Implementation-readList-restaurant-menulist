@@ -1,0 +1,114 @@
+QUESTION:
+
+Write an implementation to read list of items to be added into the restaurant menulist.
+The items can be sorted naturally based on categories and also explicitly able to sort based on price/name
+
+ANSWER:
+
+import java.util.*;
+
+// Enum to define item categories
+enum MenuCategory {
+    APPETIZER, MAIN_COURSE, DESSERT, BEVERAGE
+}
+
+// Class representing each menu item
+class MenuItem {
+    private String name;
+    private double price;
+    private MenuCategory category;
+
+    public MenuItem(String name, double price, MenuCategory category) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public MenuCategory getCategory() {
+        return category;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s) - $%.2f", name, category, price);
+}
+}
+
+// Class for managing the menu
+class RestaurantMenu {
+    private List<MenuItem> menuItems;
+
+    public RestaurantMenu() {
+        menuItems = new ArrayList<>();
+    }
+
+    // Add an item to the menu
+    public void addItem(MenuItem item) {
+        menuItems.add(item);
+    }
+
+    // Display the menu items sorted by category (default)
+    public void displayMenuSortedByCategory() {
+        menuItems.sort(Comparator.comparing(MenuItem::getCategory));
+        System.out.println("Menu Sorted by Category:");
+        for (MenuItem item : menuItems) {
+            System.out.println(item);
+        }
+    }
+
+    // Sort menu items by name
+    public void displayMenuSortedByName() {
+        menuItems.sort(Comparator.comparing(MenuItem::getName));
+        System.out.println("Menu Sorted by Name:");
+        for (MenuItem item : menuItems) {
+            System.out.println(item);
+        }
+    }
+
+    // Sort menu items by price
+    public void displayMenuSortedByPrice() {
+        menuItems.sort(Comparator.comparing(MenuItem::getPrice));
+        System.out.println("Menu Sorted by Price:");
+        for (MenuItem item : menuItems) {
+            System.out.println(item);
+        }
+    }
+}
+// Main class to test the menu implementation
+public class Main {
+    public static void main(String[] args) {
+        RestaurantMenu menu = new RestaurantMenu();
+
+        // Adding items to the menu
+        menu.addItem(new MenuItem("Caesar Salad", 7.99, MenuCategory.APPETIZER));
+        menu.addItem(new MenuItem("Grilled Chicken", 15.99, MenuCategory.MAIN_COURSE));
+        menu.addItem(new MenuItem("Chocolate Cake", 5.99, MenuCategory.DESSERT));
+        menu.addItem(new MenuItem("Lemonade", 2.99, MenuCategory.BEVERAGE));
+        menu.addItem(new MenuItem("Burger", 12.99, MenuCategory.MAIN_COURSE));
+        menu.addItem(new MenuItem("Iced Tea", 1.99, MenuCategory.BEVERAGE));
+
+        // Display menu sorted by category
+        menu.displayMenuSortedByCategory();
+        System.out.println();
+
+        // Display menu sorted by name
+        menu.displayMenuSortedByName();
+        System.out.println();
+
+        // Display menu sorted by price
+        menu.displayMenuSortedByPrice();
+    }
+}
+
+Output:
+
+The items will be displayed sorted by category, then by name, and finally by price. 
+
