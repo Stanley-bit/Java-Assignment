@@ -1,0 +1,162 @@
+QUESTION:
+
+Design a project to display hello world.
+a)	Use any view page like jsp, html etc.
+b)	Use web framework as controller
+c)	Use MYSQL db to storing values
+d)	Can we build web project without web.xml?
+
+ANSWER:
+
+1. Set up the Spring Boot Application
+
+Spring Boot eliminates the need for a web.xml file by using annotations and an embedded server (Tomcat/Jetty).
+
+Steps:
+	• Use Spring Boot Initializer to create a Spring Boot project:
+	• Select dependencies: Spring Web, Spring Data JPA, MySQL Driver.
+	• Group: com.example
+	• Artifact: hello-world-app
+	• Packaging: Jar
+	• Java Version: 11 or 17
+
+Main Application:
+
+package com.example.helloworldapp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class HelloWorldAppApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(HelloWorldAppApplication.class, args);
+    }
+}
+2. Create the Controller
+
+The controller will handle incoming requests and return a view (JSP or HTML) displaying “Hello World”.
+
+Controller:
+
+package com.example.helloworldapp.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+@Controller
+public class HelloWorldController {
+
+    @GetMapping("/hello")
+    public String hello(Model model) {
+        // Add data to be displayed in the view
+        model.addAttribute("message", "Hello, World!");
+        return "hello"; // return the name of the view (hello.jsp)
+    }
+}
+
+
+3. Create the View (JSP)
+
+You can use JSP to display the data sent from the controller.
+
+hello.jsp (placed under src/main/webapp/WEB-INF/views):
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World</title>
+</head>
+<body>
+    <h1>${message}</h1>
+</body>
+</html>
+4. Database Configuration (MySQL)
+
+In application.properties (or application.yml), configure the MySQL database connection:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/helloworlddb
+spring.datasource.username=root
+spring.datasource.password=root_password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+5. Create a Database Table and Model
+
+For the sake of the example, let’s store some “Hello World” values in the database.
+
+Model Class (Entity):
+
+package com.example.helloworldapp.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class HelloWorldMessage {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String message;
+
+    // Getters and Setters
+}
+
+Repository Interface:
+
+package com.example.helloworldapp.repository;
+
+import com.example.helloworldapp.model.HelloWorldMessage;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface HelloWorldRepository extends JpaRepository<HelloWorldMessage, Long> {
+}
+
+6. Save and Retrieve “Hello World” Messages from MySQL
+
+You can save and retrieve values from the MySQL database. In this case, the HelloWorldController can retrieve the “Hello World” message from the database and pass it to the view.
+
+Modified Controller to Fetch from DB:
+
+package com.example.helloworldapp.controller;
+
+import com.example.helloworldapp.model.HelloWorldMessage;
+import com.example.helloworldapp.repository.HelloWorldRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class HelloWorldController {
+
+    @Autowired
+    private HelloWorldRepository helloWorldRepository;
+
+    @GetMapping("/hello")
+    public String hello(Model model) {
+        HelloWorldMessage message = helloWorldRepository.findById(1L).orElse(new HelloWorldMessage());
+model.addAttribute("message", message.getMessage());
+        return "hello";
+    }
+}
+7. Run the Project
+
+You can run this project using your IDE or by using Maven:
+
+mvn spring-boot:run
+
+Access the app at: http://localhost:8080/hello.
+
+8. Can We Build a Web Project Without web.xml?
+
+Yes, with Spring Boot, web.xml is no longer needed. Spring Boot automatically configures the necessary components, such as the embedded Tomcat server, servlet context, and request mappings. The use of annotations (@SpringBootApplication, @Controller, @GetMapping) replaces the need for manual servlet configurations in web.xml.
+
+Spring Boot auto-configuration and embedded servers allow the project to be lightweight and easy to deploy without the need for web.xml. 
+
+
