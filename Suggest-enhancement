@@ -1,0 +1,65 @@
+QUESTION:
+
+How can you suggest enhancement to this code snippet:
+public class ArrArgs { 
+public static void main (String args[]) { 
+try { 
+int k=0; 
+do { 
+System.out.println("Value of input is" + k + "and arguments" + args[k++]); 
+} while (true); 
+} catch (ArrayIndexOutOfBoundsException errorOc) { 
+System.err.println("Eror occured "+errorOc.toString()); 
+} 
+} 
+} 
+
+ANSWER: 
+
+public class ArtArgs { 
+ 
+    public static void main(String[] args) { 
+        try { 
+            int k = 0; 
+ 
+            // Loop through the arguments 
+            do { 
+                if (k >= args.length) { 
+                    break; // Exit the loop if no more arguments 
+                } 
+                System.out.println("Value of input is " + k + " and argument is " + args[k]); 
+                k++; 
+            } while (true); 
+ 
+        } catch (ArrayIndexOutOfBoundsException errorOc) { 
+            System.err.println("Error occurred: " + errorOc.toString()); 
+        } 
+    } 
+} 
+
+
+DETAILS: 
+ 
+1. if (k >= args.length) ensures the loop breaks when all arguments are printed, preventing 
+an out-of-bounds exception. 
+2. Added spaces and formatted the code for better readability. 
+3. Removed the need for catching the ArrayIndexOutOfBoundsException by handling the 
+condition within the loop. 
+
+GENERAL EXPLANATION:
+
+1. Syntax Corrections: 
+• Replace ( and ) with { and } where applicable for proper code block syntax. 
+• Close the catch block with a proper } instead of  ]. 
+2. Loop Condition: 
+• The current do-while loop has while (true), which leads to an infinite loop. 
+You should      
+modify the condition so it stops when all the arguments are 
+processed, using args.length. 
+3. Error Handling: 
+• Instead of catching the ArrayIndexOutOfBoundsException, you can check the 
+length of args in the loop condition to avoid the exception entirely. 
+4. Improving Error Message: 
+• Enhance the error message for clarity and debugging purposes. 
+5. Code Formatting: 
+• Add spaces and formatting to improve code readability. 
